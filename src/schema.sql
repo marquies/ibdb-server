@@ -167,3 +167,19 @@ CREATE TABLE component_compatibility (
     standard_id INT REFERENCES component_standards(standard_id) ON DELETE CASCADE,
     PRIMARY KEY (component_id, standard_id)
 );
+
+-- Create table for storing scraped bike data for review
+CREATE TABLE IF NOT EXISTS scraped_bikes_review (
+    review_id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    type VARCHAR(50) CHECK (type IN ('e-bike', 'MTB', 'road', 'gravel', 'hybrid')),
+    brand_id INT REFERENCES brands(brand_id),
+    model_year INTEGER,
+    raw_data JSONB NOT NULL,
+    scraped_at TIMESTAMP NOT NULL,
+    status VARCHAR(20) CHECK (status IN ('pending', 'approved', 'rejected')) DEFAULT 'pending',
+    matching_bike_id INT REFERENCES bicycles(bike_id),
+    reviewed_at TIMESTAMP,
+    reviewed_by VARCHAR(255),
+    review_notes TEXT
+);
